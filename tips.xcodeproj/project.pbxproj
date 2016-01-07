@@ -13,6 +13,7 @@
 		53F1EDFD1C3D985C00E9F6FA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53F1EDFC1C3D985C00E9F6FA /* Images.xcassets */; };
 		53F1EE001C3D985C00E9F6FA /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 53F1EDFE1C3D985C00E9F6FA /* LaunchScreen.xib */; };
 		53F1EE0C1C3D985C00E9F6FA /* tipsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F1EE0B1C3D985C00E9F6FA /* tipsTests.swift */; };
+		53F1EE191C3DE44800E9F6FA /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F1EE181C3DE44800E9F6FA /* SettingsTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		53F1EE051C3D985C00E9F6FA /* tipsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tipsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		53F1EE0A1C3D985C00E9F6FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		53F1EE0B1C3D985C00E9F6FA /* tipsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tipsTests.swift; sourceTree = "<group>"; };
+		53F1EE181C3DE44800E9F6FA /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,8 +79,8 @@
 		53F1EDF21C3D985C00E9F6FA /* tips */ = {
 			isa = PBXGroup;
 			children = (
+				53F1EE171C3DBA7A00E9F6FA /* View Controllers */,
 				53F1EDF51C3D985C00E9F6FA /* AppDelegate.swift */,
-				53F1EDF71C3D985C00E9F6FA /* ViewController.swift */,
 				53F1EDF91C3D985C00E9F6FA /* Main.storyboard */,
 				53F1EDFC1C3D985C00E9F6FA /* Images.xcassets */,
 				53F1EDFE1C3D985C00E9F6FA /* LaunchScreen.xib */,
@@ -110,6 +112,15 @@
 				53F1EE0A1C3D985C00E9F6FA /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		53F1EE171C3DBA7A00E9F6FA /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				53F1EDF71C3D985C00E9F6FA /* ViewController.swift */,
+				53F1EE181C3DE44800E9F6FA /* SettingsTableViewController.swift */,
+			);
+			name = "View Controllers";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,6 +223,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53F1EE191C3DE44800E9F6FA /* SettingsTableViewController.swift in Sources */,
 				53F1EDF81C3D985C00E9F6FA /* ViewController.swift in Sources */,
 				53F1EDF61C3D985C00E9F6FA /* AppDelegate.swift in Sources */,
 			);
