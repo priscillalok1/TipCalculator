@@ -42,6 +42,6 @@
         </view>
     </objects>
     <resources>
-        <image name="coins" width="400" height="400"/>
+        <image name="coins" width="375" height="360"/>
     </resources>
 </document>

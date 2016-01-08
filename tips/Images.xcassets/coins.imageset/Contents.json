@@ -3,7 +3,15 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "coins.png"
+      "filename" : "coins.jpeg"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
