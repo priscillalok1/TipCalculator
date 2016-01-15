@@ -8,8 +8,17 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+extension Double {
+    var asLocaleCurrency:String {
+        var formatter = NSNumberFormatter()
+        formatter.numberStyle = .CurrencyStyle
+        formatter.locale = NSLocale.currentLocale()
+        return formatter.stringFromNumber(self)!
+    }
+}
 
+class ViewController: UIViewController {
+    
     @IBOutlet weak var billAmountTextLabel: UILabel!
     @IBOutlet weak var billField: UITextField!
     
@@ -41,56 +50,44 @@ class ViewController: UIViewController {
         //immediately show keyboard upon opening app
         billField.becomeFirstResponder()
         
-        
-        
-        //obtain default tip, min tip and max tip values from NSUserDefault to initiate tipPercentSlideBar
         let defaults = NSUserDefaults.standardUserDefaults()
         
-        if defaults.stringForKey("defaultTip") == nil
-        {
-            defaults.setObject("20", forKey: "defaultTip") //if no value set for defaultTip, set it to 20
-        }
-        let defaultTipStr = NSString(string:defaults.stringForKey("defaultTip")!)
-        let defaultFloat = defaultTipStr.floatValue
-        tipPercentSlideBar.value = defaultFloat
-        tipPercentLabel.text = defaultTipStr as String + "%"
-        
-        
-        if defaults.stringForKey("minTip") == nil
-        {
-            defaults.setObject("10", forKey: "minTip")
-        }
-        let minTipStr = NSString(string:defaults.stringForKey("minTip")!)
-        tipPercentSlideBar.minimumValue = minTipStr.floatValue
-        
-        if defaults.stringForKey("maxTip") == nil
-        {
-            defaults.setObject("30", forKey: "maxTip")
-        }
-        let maxTipStr = NSString(string:defaults.stringForKey("maxTip")!)
-        tipPercentSlideBar.maximumValue = maxTipStr.floatValue
-        tipPercentSlideBar.setNeedsDisplay()
-        
-        
-        if defaults.stringForKey("lastTipPercent") == nil
-        {
-            defaults.setObject(defaults.stringForKey("defaultTip"), forKey: "maxTip")
-        }
         //initiate billField and tip/total values to zero or nil if no record of lastBillAmount (this is cleared upon applicationWillTerminate)
-        if defaults.valueForKey("lastBillAmount") == nil
-        {
+        if defaults.valueForKey("lastBillAmount") == nil {
             billField.text = ""
             tipLabel.text = "$0.00"
             totalLabel.text = "$0.00"
         }
-        else
-        {
+        else {
             updateValues()
         }
-        tipPercentSlideBar.value = defaultFloat
-        animateResultsView()
         
+        //initialize defaultTip, minTip, max Tip to default values if not yet set
+        if defaults.stringForKey("defaultTip") == nil {
+            defaults.setObject("20", forKey: "defaultTip")
+        }
+        if defaults.stringForKey("minTip") == nil {
+            defaults.setObject("10", forKey: "minTip")
+        }
+        if defaults.stringForKey("maxTip") == nil {
+            defaults.setObject("30", forKey: "maxTip")
+        }
+        if defaults.stringForKey("lastTipPercent") == nil {
+            defaults.setObject(defaults.stringForKey("defaultTip"), forKey: "lastTipPercent")
+        }
         
+        let defaultTip = NSString(string:defaults.stringForKey("defaultTip")!)
+        let minTip = NSString(string:defaults.stringForKey("minTip")!).floatValue
+        let maxTip = NSString(string:defaults.stringForKey("maxTip")!).floatValue
+        
+        //change UI to reflect default values
+        tipPercentSlideBar.minimumValue = minTip
+        tipPercentSlideBar.maximumValue = maxTip
+        tipPercentSlideBar.value = floor(defaultTip.floatValue)
+        tipPercentLabel.text =  defaultTip as String + "%"
+        tipPercentSlideBar.setNeedsDisplay()
+
+
     }
     
     //this function is called when main screen appears after settings are set
@@ -98,28 +95,22 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
         let defaults = NSUserDefaults.standardUserDefaults()
         
-        //set slideBar to reflect new min and max tip percent values
-        tipPercentSlideBar.minimumValue = NSString(string:defaults.stringForKey("minTip")!).floatValue
-        tipPercentSlideBar.maximumValue = NSString(string:defaults.stringForKey("maxTip")!).floatValue
+        let defaultTip = NSString(string:defaults.stringForKey("defaultTip")!)
+        let minTip = NSString(string:defaults.stringForKey("minTip")!).floatValue
+        let maxTip = NSString(string:defaults.stringForKey("maxTip")!).floatValue
         
-        var defaultTip = NSString(string:defaults.stringForKey("defaultTip")!).floatValue
-        var minTip = NSString(string:defaults.stringForKey("minTip")!).floatValue
-        var maxTip = NSString(string:defaults.stringForKey("maxTip")!).floatValue
-        
-        //if last tip percent stored has a value
-        if defaults.stringForKey("lastTipPercent") != nil
+        if tipPercentSlideBar.value < minTip || tipPercentSlideBar.value > maxTip
         {
-            //reset slidebar value to reflect on new min to max scale
-            var lastTipPercent = NSString(string:defaults.stringForKey("lastTipPercent")!).floatValue
-            //if last tip percent stored is outside of current min and max range reset tip percent to default
-            if lastTipPercent < minTip || lastTipPercent > maxTip
-            {
-                defaults.setObject(defaults.stringForKey("defaultTip"), forKey: "lastTipPercent")
-                tipPercentSlideBar.value = defaultTip
-                tipPercentLabel.text = NSString(string:defaults.stringForKey("defaultTip")!) as String + "%"
-            }
-            
+            defaults.setObject(defaults.stringForKey("defaultTip"), forKey: "lastTipPercent")
+            tipPercentSlideBar.value = floor(defaultTip.floatValue)
+            tipPercentLabel.text = defaultTip as String + "%"
         }
+        
+        //update slider values after settings page is updated
+        tipPercentSlideBar.minimumValue = minTip
+        tipPercentSlideBar.maximumValue = maxTip
+        
+        animateResultsView()
     
     }
     
@@ -170,7 +161,7 @@ class ViewController: UIViewController {
                 defaults.setObject(tipPercentLabel.text, forKey: "lastTipPercent")
             }
             var lastTipPercentFloat = NSString(string:defaults.stringForKey("lastTipPercent")!).floatValue
-            tipPercentSlideBar.value = lastTipPercentFloat
+            tipPercentSlideBar.value = floor(lastTipPercentFloat)
         }
         else
         {
@@ -188,20 +179,8 @@ class ViewController: UIViewController {
         //if bill field changes to empty string, fade out other fields
         if billField.text == ""
         {
-            UIView.animateWithDuration(1.0, animations: {
-                self.tipPercentTextLabel.alpha = 0
-                self.tipPercentLabel.alpha = 0
-                self.tipPercentSlideBar.alpha = 0
-                self.smileyFaceImage.alpha = 0
-                self.sadfaceImage.alpha = 0
-                self.tipTextLabel.alpha = 0
-                self.tipLabel.alpha = 0
-                self.totalTextLabel.alpha = 0
-                self.totalLabel.alpha = 0
-                self.sectionSeparatorLine.alpha = 0
-            })
+            hideFields()
         }
-
     }
     
     //update tip percent label when slidebar value is changed
@@ -214,6 +193,8 @@ class ViewController: UIViewController {
         var defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(tipPercentLabel.text, forKey: "lastTipPercent")
         
+        let calibratedVal = floor(tipPercentSlideBar.value)
+        tipPercentSlideBar.value = calibratedVal
         //recalculate tip and total amount after percent is changed
         updateValues()
         
@@ -224,23 +205,11 @@ class ViewController: UIViewController {
     {
         if billField.text == ""
         {
-            UIView.animateWithDuration(0, animations: {
-                self.tipPercentTextLabel.alpha = 0
-                self.tipPercentLabel.alpha = 0
-                self.tipPercentSlideBar.alpha = 0
-                self.smileyFaceImage.alpha = 0
-                self.sadfaceImage.alpha = 0
-                self.tipTextLabel.alpha = 0
-                self.tipLabel.alpha = 0
-                self.totalTextLabel.alpha = 0
-                self.totalLabel.alpha = 0
-                self.sectionSeparatorLine.alpha = 0
-            })
-            
+            hideFields()
         }
         else
         {
-            UIView.animateWithDuration(0, animations: {
+            UIView.animateWithDuration(0.1, animations: {
                 self.tipPercentTextLabel.alpha = 1
                 self.tipPercentLabel.alpha = 1
                 self.tipPercentSlideBar.alpha = 1
@@ -255,30 +224,37 @@ class ViewController: UIViewController {
         }
     }
     
+    func hideFields()
+    {
+        UIView.animateWithDuration(0.1, animations: {
+            self.tipPercentTextLabel.alpha = 0
+            self.tipPercentLabel.alpha = 0
+            self.tipPercentSlideBar.alpha = 0
+            self.smileyFaceImage.alpha = 0
+            self.sadfaceImage.alpha = 0
+            self.tipTextLabel.alpha = 0
+            self.tipLabel.alpha = 0
+            self.totalTextLabel.alpha = 0
+            self.totalLabel.alpha = 0
+            self.sectionSeparatorLine.alpha = 0
+        })
+
+    }
+    
     //calculate values after tip percent or bill amount is changed
     func updateValues()
     {
-        let billFieldString = NSString(string:billField.text)
-        var billAmount  = billFieldString.doubleValue
-        let tipPercentString = NSString(string:tipPercentLabel.text!)
-        var tipPercent = tipPercentString.doubleValue * 0.01
+        var billAmount  = NSString(string:billField.text).doubleValue
+        var tipPercent = NSString(string:tipPercentLabel.text!).doubleValue * 0.01
         var tip = billAmount * tipPercent
         var total = billAmount + tip
         
-        var formatter = NSNumberFormatter()
-        formatter.numberStyle = .CurrencyStyle
-        formatter.stringFromNumber(total)
-        
+        tipLabel.text = tip.asLocaleCurrency
+        totalLabel.text = total.asLocaleCurrency
 
-        tipLabel.text = "$\(tip)"
-        totalLabel.text = "$\(total)"
-        
-        tipLabel.text = String(format: "$%.2f", tip)
-        totalLabel.text = String(format: "$%.2f", total)
-        
-        
-        
     }
+    
+   
     
     //exits out of digit keypad when user clicks outside keypad
     @IBAction func onTap(sender: AnyObject) {
