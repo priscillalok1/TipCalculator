@@ -12,5 +12,6 @@ Completed:
 * [x] Optional: Remembering the bill amount across app restarts (if <10mins)
 * [x] Optional: Making sure the keyboard is always visible and the bill amount is always the first responder. This way the user doesn't have to tap anywhere to use this app. Just launch the app and start typing.
 * [x] Optional: User can set min and max values for tip slideBar
+* [x] Optional: Using locale-specific currency and currency thousands separators.
 
 ![Video Walkthrough](tipsGiphy_small.gif)
